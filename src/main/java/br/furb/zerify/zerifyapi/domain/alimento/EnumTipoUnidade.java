@@ -1,4 +1,4 @@
-package br.furb.zerify.zerifyapi.domain;
+package br.furb.zerify.zerifyapi.domain.alimento;
 
 public enum EnumTipoUnidade {
 

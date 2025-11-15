@@ -3,7 +3,6 @@ package br.furb.zerify.zerifyapi.domain.alimento;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import br.furb.zerify.zerifyapi.domain.EnumTipoUnidade;
 import br.furb.zerify.zerifyapi.domain.despensa.DespensaEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
