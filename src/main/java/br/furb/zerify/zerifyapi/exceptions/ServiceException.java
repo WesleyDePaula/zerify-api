@@ -18,16 +18,13 @@ public class ServiceException extends RuntimeException {
 
     protected ResponseEntity<Error> getResponse() {
         switch (status) {
-            case BAD_REQUEST -> {
+            case BAD_REQUEST:
                 return ResponseEntity.badRequest().body(new Error(this.message));
-            }
-            case NOT_FOUND -> {
+            case NOT_FOUND:
                 return ResponseEntity.status(HttpStatusCode.valueOf(404)).body(new Error(this.message));
-            }
-            case INTERNAL_SERVER_ERROR,
-            default -> {
+            case INTERNAL_SERVER_ERROR:
+            default:
                 return ResponseEntity.status(HttpStatusCode.valueOf(500)).body(new Error(this.message));
-            }
         }
     }
 

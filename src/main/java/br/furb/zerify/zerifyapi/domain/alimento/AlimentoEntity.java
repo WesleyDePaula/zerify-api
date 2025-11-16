@@ -47,5 +47,5 @@ public class AlimentoEntity {
 	// TODO: Verificar relacionamento com entidade Despensa (Teremos uma tabela intermediária? ou será ManyToOne?)
 	@ManyToOne
 	@JoinColumn(name="despensa_id")
-	DespensaEntity despensa;
+    DespensaEntity despensa;
 }

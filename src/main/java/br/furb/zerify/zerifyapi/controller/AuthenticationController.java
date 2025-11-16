@@ -1,6 +1,8 @@
 package br.furb.zerify.zerifyapi.controller;
 
-import br.furb.zerify.zerifyapi.domain.usuario.*;
+import br.furb.zerify.zerifyapi.domain.usuario.dto.AuthenticationInputDTO;
+import br.furb.zerify.zerifyapi.domain.usuario.dto.LoginResponseDTO;
+import br.furb.zerify.zerifyapi.domain.usuario.dto.RegisterInputDTO;
 import br.furb.zerify.zerifyapi.services.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +20,14 @@ public class AuthenticationController {
     private UsuarioService usuarioService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthenticationDTO authenticationDTO) {
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthenticationInputDTO authenticationDTO) {
         return ResponseEntity.ok(new LoginResponseDTO(usuarioService.loginUsuario(authenticationDTO)));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid RegisterDTO registerDTO) {
+    public ResponseEntity<?> register(@RequestBody @Valid RegisterInputDTO registerDTO) {
         usuarioService.cadastrarUsuario(registerDTO);
-        var token = usuarioService.loginUsuario(new AuthenticationDTO(registerDTO.email(), registerDTO.senha()));
+        var token = usuarioService.loginUsuario(new AuthenticationInputDTO(registerDTO.email(), registerDTO.senha()));
         return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 

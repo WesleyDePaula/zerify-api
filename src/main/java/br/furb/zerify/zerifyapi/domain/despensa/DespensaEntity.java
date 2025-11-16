@@ -4,14 +4,8 @@ import java.util.List;
 import java.util.UUID;
 
 import br.furb.zerify.zerifyapi.domain.alimento.AlimentoEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import br.furb.zerify.zerifyapi.domain.usuario.UsuarioEntity;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -32,9 +26,8 @@ public class DespensaEntity {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "despensa")
 	List<AlimentoEntity> alimentos;
 	
-	// TODO: Criar entidade usuário e verificar relacionamento
-//	@ManyToOne
-//	@JoinColumn(name="usuario_id")
-//	UsuarioEntity usuario;
+	@OneToOne //TODO: Apenas um usuário possui uma despensa e a despensa pode ter apenas um usuário?
+	@JoinColumn(name="usuario_id")
+    UsuarioEntity usuario;
 	
 }

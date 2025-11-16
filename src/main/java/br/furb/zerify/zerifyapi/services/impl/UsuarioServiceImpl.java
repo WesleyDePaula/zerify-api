@@ -1,8 +1,8 @@
 package br.furb.zerify.zerifyapi.services.impl;
 
 import br.furb.zerify.zerifyapi.auth.TokenService;
-import br.furb.zerify.zerifyapi.domain.usuario.AuthenticationDTO;
-import br.furb.zerify.zerifyapi.domain.usuario.RegisterDTO;
+import br.furb.zerify.zerifyapi.domain.usuario.dto.AuthenticationInputDTO;
+import br.furb.zerify.zerifyapi.domain.usuario.dto.RegisterInputDTO;
 import br.furb.zerify.zerifyapi.domain.usuario.UsuarioEntity;
 import br.furb.zerify.zerifyapi.domain.usuario.UsuarioRepository;
 import br.furb.zerify.zerifyapi.exceptions.ServiceException;
@@ -29,7 +29,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional
-    public UsuarioEntity cadastrarUsuario(RegisterDTO dto) {
+    public UsuarioEntity cadastrarUsuario(RegisterInputDTO dto) {
 
         if (usuarioRepository.findByEmail(dto.email()) != null) throw new ServiceException(HttpStatus.BAD_REQUEST, "Já existe um usuário com este email");
 
@@ -46,8 +46,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional(readOnly = true)
-    public String loginUsuario(AuthenticationDTO authenticationDTO) {
-        var usernamePassword = new UsernamePasswordAuthenticationToken(authenticationDTO.email(), authenticationDTO.password());
+    public String loginUsuario(AuthenticationInputDTO authenticationDTO) {
+        var usernamePassword = new UsernamePasswordAuthenticationToken(authenticationDTO.email(), authenticationDTO.senha());
         var auth = authenticationManager.authenticate(usernamePassword);
 
         return tokenService.gerarToken((UsuarioEntity) auth.getPrincipal());
