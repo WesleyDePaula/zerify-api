@@ -1,5 +1,6 @@
 package br.furb.zerify.zerifyapi.controller;
 
+import br.furb.zerify.zerifyapi.domain.despensa.dto.RetrieveDespensaResponseDTO;
 import br.furb.zerify.zerifyapi.domain.despensa.dto.SaveDespensaInputDTO;
 import br.furb.zerify.zerifyapi.domain.despensa.dto.SaveDespensaResponseDTO;
 import br.furb.zerify.zerifyapi.services.DespensaService;
@@ -19,6 +20,14 @@ public class DespensaController {
     public ResponseEntity<SaveDespensaResponseDTO> save(@RequestBody @Valid SaveDespensaInputDTO despensaDTO) {
         var despensaId = despensaService.saveDespensa(despensaDTO);
         return ResponseEntity.ok(new SaveDespensaResponseDTO(despensaId.getId().toString()));
+    }
+
+    @GetMapping
+    public ResponseEntity<RetrieveDespensaResponseDTO> retrieve() {
+        var despensa = despensaService.retrieveDespensa();
+        return ResponseEntity.ok(despensa != null ?
+                new RetrieveDespensaResponseDTO(String.valueOf(despensa.getId()), despensa.getNome())
+                : null);
     }
 
 }

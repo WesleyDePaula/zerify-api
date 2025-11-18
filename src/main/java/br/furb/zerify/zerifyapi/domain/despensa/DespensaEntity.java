@@ -26,7 +26,7 @@ public class DespensaEntity {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "despensa")
 	List<AlimentoEntity> alimentos;
 	
-	@OneToOne //TODO: Apenas um usuário possui uma despensa e a despensa pode ter apenas um usuário?
+	@OneToOne
 	@JoinColumn(name="usuario_id")
     UsuarioEntity usuario;
 	

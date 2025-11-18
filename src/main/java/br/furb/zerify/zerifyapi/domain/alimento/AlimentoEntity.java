@@ -4,14 +4,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import br.furb.zerify.zerifyapi.domain.despensa.DespensaEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -33,18 +26,19 @@ public class AlimentoEntity {
 	String categoria;
 	
 	@Column(name="quantidade")
-	Integer quantidade;
+	Long quantidade;
 	
 	@Column(name="unidade")
+    @Enumerated(EnumType.STRING)
 	EnumTipoUnidade unidade;
 	
 	@Column(name="data_validade")
 	LocalDate dataValidade;
 	
 	@Column(name="situacao")
+    @Enumerated(EnumType.STRING)
 	EnumSituacaoAlimento situacao;
 	
-	// TODO: Verificar relacionamento com entidade Despensa (Teremos uma tabela intermediária? ou será ManyToOne?)
 	@ManyToOne
 	@JoinColumn(name="despensa_id")
     DespensaEntity despensa;

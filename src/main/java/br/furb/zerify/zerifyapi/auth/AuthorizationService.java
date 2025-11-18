@@ -2,7 +2,9 @@ package br.furb.zerify.zerifyapi.auth;
 
 import br.furb.zerify.zerifyapi.domain.usuario.UsuarioEntity;
 import br.furb.zerify.zerifyapi.domain.usuario.UsuarioRepository;
+import br.furb.zerify.zerifyapi.exceptions.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,7 +26,7 @@ public class AuthorizationService implements UserDetailsService {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null) {
-            return null; // ou lançar exceção
+            throw new ServiceException(HttpStatus.NOT_FOUND, "Usuário autenticado não encontrado");
         }
 
         return (UsuarioEntity) authentication.getPrincipal();

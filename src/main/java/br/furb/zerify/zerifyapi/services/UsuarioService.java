@@ -8,5 +8,6 @@ public interface UsuarioService {
 
     UsuarioEntity cadastrarUsuario(RegisterInputDTO dto);
     String loginUsuario(AuthenticationInputDTO authenticationDTO);
+    UsuarioEntity getUsuarioAtual();
 
 }

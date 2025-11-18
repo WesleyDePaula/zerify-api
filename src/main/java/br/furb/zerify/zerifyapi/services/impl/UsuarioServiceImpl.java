@@ -1,5 +1,6 @@
 package br.furb.zerify.zerifyapi.services.impl;
 
+import br.furb.zerify.zerifyapi.auth.AuthorizationService;
 import br.furb.zerify.zerifyapi.auth.TokenService;
 import br.furb.zerify.zerifyapi.domain.usuario.dto.AuthenticationInputDTO;
 import br.furb.zerify.zerifyapi.domain.usuario.dto.RegisterInputDTO;
@@ -27,6 +28,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private AuthorizationService authorizationService;
+
     @Override
     @Transactional
     public UsuarioEntity cadastrarUsuario(RegisterInputDTO dto) {
@@ -51,5 +55,10 @@ public class UsuarioServiceImpl implements UsuarioService {
         var auth = authenticationManager.authenticate(usernamePassword);
 
         return tokenService.gerarToken((UsuarioEntity) auth.getPrincipal());
+    }
+
+    @Override
+    public UsuarioEntity getUsuarioAtual() {
+        return authorizationService.getCurrentUser();
     }
 }

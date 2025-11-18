@@ -10,4 +10,5 @@ public interface DespensaService {
 
     DespensaEntity saveDespensa(@Valid SaveDespensaInputDTO despensaDto);
 
+    DespensaEntity retrieveDespensa();
 }

@@ -31,6 +31,7 @@ public class UsuarioEntity implements UserDetails {
     String senha;
 
     @Column(name = "plano")
+    @Enumerated(EnumType.STRING)
     TipoPlano plano;
 
     @Override
