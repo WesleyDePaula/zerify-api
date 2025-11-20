@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
 
-public interface AlimentoRepository extends JpaRepository<AlimentoEntity, UUID> {
+public interface AlimentoRepository extends JpaRepository<AlimentoEntity, UUID>, AlimentoRepositoryCustom {
 
     Page<AlimentoEntity> findByDespensaId(UUID despensaId, Pageable page);
 

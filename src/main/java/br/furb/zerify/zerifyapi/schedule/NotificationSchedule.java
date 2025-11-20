@@ -1,7 +1,8 @@
 package br.furb.zerify.zerifyapi.schedule;
 
 import br.furb.zerify.zerifyapi.domain.SendEmailInput;
-import br.furb.zerify.zerifyapi.domain.alimento.AlimentoEntity;
+import br.furb.zerify.zerifyapi.domain.alimento.AlimentoRepository;
+import br.furb.zerify.zerifyapi.domain.alimento.dto.AlimentosAVencerProjection;
 import br.furb.zerify.zerifyapi.services.NotificationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Component
 @Slf4j
@@ -18,33 +21,56 @@ public class NotificationSchedule {
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    private AlimentoRepository alimentoRepository;
+
     /**
      * Executa todo dia as 07:00 da manhã
      */
-    @Scheduled(cron = "0 0 7 ? * *")
-//    @Scheduled(cron = "10 * * * * *")
+//    @Scheduled(cron = "0 0 7 ? * *")
+    @Scheduled(cron = "10 * * * * *")
     public void publishNotification() {
         log.info("### Iniciando envio de email alerta");
 
-        /**
-         * TODO: Implementar regra para buscar usuários e alimentos a serem notificados
-         * Deve buscar todos os alimentos que estão com a data próxima da validade (verificar na análise qual o periodo min de dias)
-         * agrupar os alimentos por usuário
-         * para cada usuário, enviar email contendo as informações dos alimentos que estão vencendo
-         */
+        List<AlimentosAVencerProjection> alimentos = alimentoRepository.findAlimentosVencidosOuProximos();
+        alimentos.stream().map(this::buildSendEmailInput).forEach(notificationService::publishNotification);
 
-        AlimentoEntity alimentoTeste = new AlimentoEntity();
-        alimentoTeste.setNome("Leite Integral");
-        alimentoTeste.setDataValidade(LocalDate.of(2025, 9, 11));
+    }
 
-        var subject = "⚠ Alerta: Alimento(s) perto da data de valdiade";
+    private SendEmailInput buildSendEmailInput(AlimentosAVencerProjection alimentosAVencerProjection) {
         var mensagem = new StringBuilder();
-        mensagem.append("Os seguintes alimentos estão próximos da data de validade, consuma-os antes do prazo:\n");
+        int total = alimentosAVencerProjection.getAlimentos().size();
+        var subject = MessageFormat.format("⚠ Alerta: {0} alimento(s) perto/fora da data de validade", total);
 
-        mensagem.append(MessageFormat.format("- {0}: data de validade até {1}", alimentoTeste.getNome(), alimentoTeste.getDataValidade()));
+        mensagem.append(MessageFormat.format("Olá, encontramos {0} alimento(s) que estão vencidos ou próximos da data de validade:\n\n", total));
 
-        var email = new SendEmailInput(subject, mensagem.toString(), "wesleydepaulapsn@gmail.com");
-        notificationService.publishNotification(email);
+        alimentosAVencerProjection.getAlimentos().forEach(alimento -> {
+            LocalDate hoje = LocalDate.now();
+            LocalDate validade = alimento.getDataValidade();
+            long dias = ChronoUnit.DAYS.between(hoje, validade);
+            String prazo;
+            if (validade == null) {
+                prazo = "data de validade não informada";
+            } else if (dias < 0) {
+                prazo = MessageFormat.format("vencido há {0} dia(s)", Math.abs(dias));
+            } else if (dias == 0) {
+                prazo = "vence hoje";
+            } else {
+                prazo = MessageFormat.format("vence em {0} dia(s)", dias);
+            }
+
+            mensagem.append(MessageFormat.format("- {0} (data de validade: {1}) — {2}\n", alimento.getNome(), validade, prazo));
+        });
+
+        mensagem.append("\nO que você pode fazer:\n");
+        mensagem.append("- Consumir os alimentos listados o quanto antes.\n");
+        mensagem.append("- Se preferir, atualize a quantidade ou remova o alimento da sua despensa no site.\n\n");
+
+        mensagem.append("Atenciosamente,\n");
+        mensagem.append("Equipe Zerify\n");
+        mensagem.append("\nObservação: Este é um e-mail automático com alertas de validade. Por favor não responda\n");
+
+        return new SendEmailInput(subject, mensagem.toString(), alimentosAVencerProjection.getUsuarioEmail());
 
     }
 
