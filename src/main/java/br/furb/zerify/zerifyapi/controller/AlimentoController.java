@@ -32,8 +32,15 @@ public class AlimentoController {
     }
 
     @PutMapping
-    public ResponseEntity<?> update() {
-        return null;
+    public ResponseEntity<ListAlimentosResponseDTO> update(@RequestBody @Valid SaveAlimentoInputDTO alimentoDTO) {
+        var alimento = alimentoService.update(alimentoDTO);
+        return ResponseEntity.ok(ListAlimentosResponseDTO.convertToRecord(alimento));
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> delete(@RequestParam("id") String alimentoId) {
+        alimentoService.delete(UUID.fromString(alimentoId));
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping()

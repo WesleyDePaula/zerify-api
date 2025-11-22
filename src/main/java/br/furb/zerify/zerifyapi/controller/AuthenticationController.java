@@ -3,10 +3,12 @@ package br.furb.zerify.zerifyapi.controller;
 import br.furb.zerify.zerifyapi.domain.usuario.dto.AuthenticationInputDTO;
 import br.furb.zerify.zerifyapi.domain.usuario.dto.LoginResponseDTO;
 import br.furb.zerify.zerifyapi.domain.usuario.dto.RegisterInputDTO;
+import br.furb.zerify.zerifyapi.domain.usuario.dto.UpdateUsuarioInputDTO;
 import br.furb.zerify.zerifyapi.services.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +31,12 @@ public class AuthenticationController {
         usuarioService.cadastrarUsuario(registerDTO);
         var token = usuarioService.loginUsuario(new AuthenticationInputDTO(registerDTO.email(), registerDTO.senha()));
         return ResponseEntity.ok(new LoginResponseDTO(token));
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<Void> updateProfile(@RequestBody @Valid UpdateUsuarioInputDTO updateDTO) {
+        usuarioService.updateUsuario(updateDTO);
+        return ResponseEntity.ok().build();
     }
 
 }

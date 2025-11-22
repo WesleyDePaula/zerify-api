@@ -4,6 +4,7 @@ import br.furb.zerify.zerifyapi.auth.AuthorizationService;
 import br.furb.zerify.zerifyapi.auth.TokenService;
 import br.furb.zerify.zerifyapi.domain.usuario.dto.AuthenticationInputDTO;
 import br.furb.zerify.zerifyapi.domain.usuario.dto.RegisterInputDTO;
+import br.furb.zerify.zerifyapi.domain.usuario.dto.UpdateUsuarioInputDTO;
 import br.furb.zerify.zerifyapi.domain.usuario.UsuarioEntity;
 import br.furb.zerify.zerifyapi.domain.usuario.UsuarioRepository;
 import br.furb.zerify.zerifyapi.exceptions.ServiceException;
@@ -60,5 +61,13 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public UsuarioEntity getUsuarioAtual() {
         return authorizationService.getCurrentUser();
+    }
+
+    @Override
+    @Transactional
+    public UsuarioEntity updateUsuario(UpdateUsuarioInputDTO dto) {
+        var usuario = authorizationService.getCurrentUser();
+        usuario.setNome(dto.nome());
+        return usuarioRepository.save(usuario);
     }
 }
