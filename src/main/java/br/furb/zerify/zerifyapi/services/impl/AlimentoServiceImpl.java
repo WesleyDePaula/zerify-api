@@ -7,7 +7,6 @@ import br.furb.zerify.zerifyapi.domain.alimento.dto.SaveAlimentoInputDTO;
 import br.furb.zerify.zerifyapi.domain.despensa.DespensaRepository;
 import br.furb.zerify.zerifyapi.exceptions.ServiceException;
 import br.furb.zerify.zerifyapi.services.AlimentoService;
-import br.furb.zerify.zerifyapi.services.DespensaService;
 import br.furb.zerify.zerifyapi.services.UsuarioService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -52,9 +51,50 @@ public class AlimentoServiceImpl implements AlimentoService {
         alimento.setUnidade(alimentoDTO.unidade());
 
         alimento.setDespensa(despensa);
-        alimento.setSituacao(EnumSituacaoAlimento.PARA_COMPRAR);
+        alimento.setSituacao(alimentoDTO.situacao() != null ? alimentoDTO.situacao() : EnumSituacaoAlimento.PARA_COMPRAR);
 
         return alimentoRepository.save(alimento);
+    }
+
+    @Override
+    @Transactional
+    public AlimentoEntity update(@Valid SaveAlimentoInputDTO alimentoDTO) {
+        var alimentoId = UUID.fromString(alimentoDTO.id());
+        var alimento = alimentoRepository.findById(alimentoId)
+                .orElseThrow(() -> new ServiceException(HttpStatus.NOT_FOUND, "Alimento não encontrado"));
+
+        var usuarioAtual = usuarioService.getUsuarioAtual();
+
+        if (!alimento.getDespensa().getUsuario().equals(usuarioAtual)) {
+            throw new ServiceException(HttpStatus.UNAUTHORIZED, "Não é possível alterar os alimentos de uma despensa de outro usuário");
+        }
+
+        alimento.setNome(alimentoDTO.nome());
+        alimento.setCategoria(alimentoDTO.categoria());
+        alimento.setQuantidade(alimentoDTO.quantidade());
+        alimento.setDataValidade(alimentoDTO.dataValidade());
+        alimento.setUnidade(alimentoDTO.unidade());
+
+        if (alimentoDTO.situacao() != null) {
+            alimento.setSituacao(alimentoDTO.situacao());
+        }
+
+        return alimentoRepository.save(alimento);
+    }
+
+    @Override
+    @Transactional
+    public void delete(UUID alimentoId) {
+        var alimento = alimentoRepository.findById(alimentoId)
+                .orElseThrow(() -> new ServiceException(HttpStatus.NOT_FOUND, "Alimento não encontrado"));
+
+        var usuarioAtual = usuarioService.getUsuarioAtual();
+
+        if (!alimento.getDespensa().getUsuario().equals(usuarioAtual)) {
+            throw new ServiceException(HttpStatus.UNAUTHORIZED, "Não é possível excluir alimentos de uma despensa de outro usuário");
+        }
+
+        alimentoRepository.delete(alimento);
     }
 
     @Override
@@ -63,4 +103,3 @@ public class AlimentoServiceImpl implements AlimentoService {
     }
 
 }
-

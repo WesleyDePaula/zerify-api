@@ -12,5 +12,9 @@ public interface AlimentoService {
 
     AlimentoEntity save(@Valid SaveAlimentoInputDTO alimento);
 
+    AlimentoEntity update(@Valid SaveAlimentoInputDTO alimento);
+
+    void delete(UUID alimentoId);
+
     Page<AlimentoEntity> listByDespensa(UUID despensaId, Pageable page);
 }
