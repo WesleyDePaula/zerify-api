@@ -27,8 +27,7 @@ public class NotificationSchedule {
     /**
      * Executa todo dia as 07:00 da manhã
      */
-//    @Scheduled(cron = "0 0 7 ? * *")
-    @Scheduled(cron = "10 * * * * *")
+    @Scheduled(cron = "0 0 7 ? * *")
     public void publishNotification() {
         log.info("### Iniciando envio de email alerta");
 
